@@ -1,22 +1,22 @@
 {
-  "generated_at": "2026-04-15T18:18:17.378Z",
-  "main_combined_file": "data/class-profiles-question-answer-data.json",
-  "notes_file": "data/class-profiles-question-answer-notes.md",
+  "generated_at": "2026-04-15T21:40:03.029Z",
+  "main_combined_file": ".context/class-profiles-question-answer-data.json",
+  "notes_file": ".context/class-profiles-question-answer-notes.md",
   "profiles": {
     "se_2025": {
       "profile": "SE 2025",
-      "item_count": 288,
-      "file": "data/class-profile-qa/se_2025.json"
+      "item_count": 338,
+      "file": ".context/class-profile-qa/se_2025.json"
     },
     "cs_2025": {
       "profile": "CS 2025",
       "item_count": 150,
-      "file": "data/class-profile-qa/cs_2025.json"
+      "file": ".context/class-profile-qa/cs_2025.json"
     },
     "ece_2025": {
       "profile": "ECE 2025",
       "item_count": 260,
-      "file": "data/class-profile-qa/ece_2025.json"
+      "file": ".context/class-profile-qa/ece_2025.json"
     }
   }
 }

@@ -3,6 +3,7 @@ export const PAGES = [
   { id: "demographics", filename: "demographics.md", href: "/demographics" },
   { id: "academics", filename: "academics.md", href: "/academics" },
   { id: "life", filename: "life.md", href: "/life" },
+  { id: "coop", filename: "coop.md", href: "/coop" },
   { id: "method", filename: "method.md", href: "/method" },
 ] as const;
 
