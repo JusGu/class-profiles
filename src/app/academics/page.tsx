@@ -7,10 +7,8 @@ export default function AcademicsPage() {
     <Editor>
       <h1># academics.md</h1>
       <p className="lede">
-        The academic questions are normalized into common ranges so all three
-        programs can be plotted on the same axis. For SE and ECE, raw numeric
-        values were rebucketed; for CS, the published distributions were mapped
-        into the closest equivalent bands.
+        Academic comparisons rebucket the published answers into common ranges
+        so the three programs can sit on the same scale.
       </p>
 
       <div className="question-stack">

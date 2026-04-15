@@ -7,10 +7,8 @@ export default function LifePage() {
     <Editor>
       <h1># life.md</h1>
       <p className="lede">
-        This tab keeps the non-academic comparisons narrow: only questions with
-        genuinely chartable distributions in all three public profiles make it
-        in. The goal is to compare real published answers, not interpolate the
-        gaps.
+        Non-academic comparisons stay narrow here: only questions with a real
+        published distribution in all three profiles make it in.
       </p>
 
       <div className="question-stack">

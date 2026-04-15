@@ -11,61 +11,53 @@ import {
   YAxis,
 } from "recharts";
 import {
-  COOP_LOCATION_ANALYSIS,
-  COOP_LOCATION_ROWS,
   COOP_METHOD_NOTES,
+  COOP_ROLE_ANALYSIS,
+  COOP_ROLE_ROWS,
 } from "@/lib/coop-data";
 
-const LOCATION_COLORS: Record<string, string> = {
-  Remote: "#689d6a",
-  Ontario: "#458588",
-  "Canada outside Ontario": "#83a598",
-  "United States": "#d79921",
-  International: "#b16286",
+const ROLE_COLORS: Record<string, string> = {
+  "Software / backend": "#d79921",
+  "Full stack": "#689d6a",
+  "Frontend / mobile": "#83a598",
+  "Infrastructure / DevOps": "#458588",
+  "Data / ML": "#8ec07c",
+  "Hardware / embedded": "#b16286",
+  "QA / test": "#cc241d",
+  "Product / research / other": "#fabd2f",
 };
 
 function formatPercent(value: number) {
   return `${value.toFixed(1)}%`;
 }
 
-export default function CoopLocationMixCard() {
+export default function CoopRoleMixCard() {
   return (
     <section className="question-card">
-      <div className="question-card-header">
+      <header className="question-card-header">
         <div>
           <span className="question-kicker">Share of recorded co-op placements</span>
-          <h2>Where co-ops were located</h2>
+          <h2>Co-op role mix</h2>
         </div>
         <div className="sample-summary" aria-label="Placement counts">
-          {COOP_LOCATION_ROWS.map((row) => (
+          {COOP_ROLE_ROWS.map((row) => (
             <span key={row.profile} className="sample-item">
               <strong>{row.profile}</strong> {row.totalPlacements} placements
             </span>
           ))}
         </div>
-      </div>
+      </header>
 
       <div className="chart-shell">
-        <ResponsiveContainer width="100%" height={280}>
-          <BarChart
-            data={COOP_LOCATION_ROWS}
-            layout="vertical"
-            margin={{ top: 8, right: 20, left: 8, bottom: 8 }}
-            barCategoryGap={18}
-          >
+        <ResponsiveContainer width="100%" height={320}>
+          <BarChart data={COOP_ROLE_ROWS} margin={{ top: 8, right: 20, left: 0, bottom: 8 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(146, 131, 116, 0.24)" />
-            <XAxis
-              type="number"
+            <XAxis dataKey="profile" stroke="#a89984" tick={{ fill: "#ebdbb2", fontSize: 12 }} />
+            <YAxis
               domain={[0, 100]}
               tickFormatter={formatPercent}
               stroke="#a89984"
               tick={{ fill: "#a89984", fontSize: 12 }}
-            />
-            <YAxis
-              type="category"
-              dataKey="profile"
-              stroke="#a89984"
-              tick={{ fill: "#ebdbb2", fontSize: 12 }}
             />
             <Tooltip
               cursor={{ fill: "rgba(60, 56, 54, 0.28)" }}
@@ -78,20 +70,20 @@ export default function CoopLocationMixCard() {
               formatter={(value: number, name) => [formatPercent(value), name]}
             />
             <Legend wrapperStyle={{ color: "#a89984", fontSize: "12px" }} />
-            {Object.entries(LOCATION_COLORS).map(([bucket, color]) => (
-              <Bar key={bucket} dataKey={bucket} stackId="location" fill={color} />
+            {Object.entries(ROLE_COLORS).map(([bucket, color]) => (
+              <Bar key={bucket} dataKey={bucket} stackId="role" fill={color} />
             ))}
           </BarChart>
         </ResponsiveContainer>
       </div>
 
       <ul className="analysis-list">
-        {COOP_LOCATION_ANALYSIS.map((line) => (
+        {COOP_ROLE_ANALYSIS.map((line) => (
           <li key={line}>{line}</li>
         ))}
       </ul>
 
-      <p className="question-note">{COOP_METHOD_NOTES[2]}</p>
+      <p className="question-note">{COOP_METHOD_NOTES[3]}</p>
     </section>
   );
 }

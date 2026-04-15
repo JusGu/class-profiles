@@ -6,9 +6,7 @@ export default function MethodPage() {
     <Editor>
       <h1># method.md</h1>
       <p className="lede">
-        This page documents what was actually matched, what was omitted, and why.
-        The point is to keep the comparison defensible rather than squeeze every
-        vaguely similar prompt into the same chart.
+        What was matched, what was excluded, and where the normalization stops.
       </p>
       <MethodPanel />
     </Editor>

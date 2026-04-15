@@ -50,8 +50,8 @@ export default function CoopSalaryTrendCard() {
               contentStyle={{
                 background: "#282828",
                 border: "1px solid #504945",
-                borderRadius: "10px",
-                color: "#fbf1c7",
+                borderRadius: "0",
+                color: "#ebdbb2",
               }}
               formatter={(value: number, name, item) => {
                 const sampleField = `${name}_n`;

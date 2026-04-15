@@ -7,10 +7,9 @@ export default function DemographicsPage() {
     <Editor>
       <h1># demographics.md</h1>
       <p className="lede">
-        These are the cleanest cross-program demographic questions that can be
-        normalized without inventing new survey responses. Where a source likely
-        preserved overlapping categories, the chart is read as share of
-        respondents selecting each bucket rather than a strict 100% composition.
+        The cleanest demographic matches across all three profiles. Overlapping
+        identity questions stay in grouped view; clean partitions use 100%
+        stacked bars.
       </p>
 
       <div className="question-stack">

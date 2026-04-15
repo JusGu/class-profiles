@@ -52,11 +52,14 @@ export interface CategoryShareRow {
   ece_2025: number;
 }
 
+export type ChartMode = "grouped" | "stacked";
+
 export interface ComparableQuestion {
   id: string;
   section: "demographics" | "academics" | "life";
   title: string;
   kicker: string;
+  chartMode: ChartMode;
   note?: string;
   categories: string[];
   rows: CategoryShareRow[];

@@ -23,6 +23,26 @@ const LOCATION_BUCKETS = [
   "International",
 ] as const;
 
+const ROLE_BUCKETS = [
+  "Software / backend",
+  "Full stack",
+  "Frontend / mobile",
+  "Infrastructure / DevOps",
+  "Data / ML",
+  "Hardware / embedded",
+  "QA / test",
+  "Product / research / other",
+] as const;
+
+const RECRUITING_BUCKETS = [
+  "WaterlooWorks main",
+  "WaterlooWorks continuous",
+  "External",
+  "Referral / connection",
+  "Return offer",
+  "Other",
+] as const;
+
 const US_LOCATION_KEYWORDS = [
   "new york",
   "new york city",
@@ -147,6 +167,18 @@ function getItem(profileId: ProfileId, question: string) {
   }
 
   return item;
+}
+
+function getItems(profileId: ProfileId, question: string) {
+  const items = raw.profiles[profileId].items.filter(
+    (candidate) => candidate.question === question,
+  );
+
+  if (items.length === 0) {
+    throw new Error(`Missing ${profileId} question: ${question}`);
+  }
+
+  return items;
 }
 
 function getAnswers(item: RawProfileItem): Array<{ label: string; count: number }> {
@@ -307,6 +339,156 @@ function bucketLocation(label: string) {
   return "International";
 }
 
+function bucketRole(label: string) {
+  const normalized = label.trim().toLowerCase();
+  if (!normalized || normalized === "n/a" || normalized === "na" || normalized === "none") {
+    return null;
+  }
+
+  if (normalized.includes("full stack") || normalized.includes("full-stack")) {
+    return "Full stack";
+  }
+
+  if (
+    normalized.includes("frontend") ||
+    normalized.includes("front end") ||
+    normalized.includes("front-end") ||
+    normalized.includes("ios") ||
+    normalized.includes("android") ||
+    normalized.includes("mobile") ||
+    normalized.includes("web ")
+  ) {
+    return "Frontend / mobile";
+  }
+
+  if (
+    normalized.includes("devops") ||
+    normalized.includes("infra") ||
+    normalized.includes("platform") ||
+    normalized.includes("site reliability") ||
+    normalized.includes("sre") ||
+    normalized.includes("cloud") ||
+    normalized.includes("systems administrator")
+  ) {
+    return "Infrastructure / DevOps";
+  }
+
+  if (
+    normalized.includes("machine learning") ||
+    normalized.includes("ml") ||
+    normalized.includes("data") ||
+    normalized.includes("analytics")
+  ) {
+    return "Data / ML";
+  }
+
+  if (
+    normalized.includes("embedded") ||
+    normalized.includes("firmware") ||
+    normalized.includes("hardware") ||
+    normalized.includes("semiconductor") ||
+    normalized.includes("power") ||
+    normalized.includes("silicon") ||
+    normalized.includes("communications") ||
+    normalized.includes("robotics")
+  ) {
+    return "Hardware / embedded";
+  }
+
+  if (
+    normalized.includes("qa") ||
+    normalized.includes("quality assurance") ||
+    normalized.includes("quality engineer") ||
+    normalized.includes("test") ||
+    normalized.includes("sdet")
+  ) {
+    return "QA / test";
+  }
+
+  if (
+    normalized.includes("product") ||
+    normalized.includes("project") ||
+    normalized.includes("program manager") ||
+    normalized.includes("designer") ||
+    normalized.includes("research") ||
+    normalized.includes("analyst") ||
+    normalized.includes("assistant") ||
+    normalized.includes("support") ||
+    normalized.includes("tutor") ||
+    normalized.includes("capital") ||
+    normalized.includes("other") ||
+    normalized.includes("it")
+  ) {
+    return "Product / research / other";
+  }
+
+  if (
+    normalized.includes("backend") ||
+    normalized.includes("back-end") ||
+    normalized.includes("software") ||
+    normalized.includes("developer") ||
+    normalized.includes("engineer") ||
+    normalized.includes("programmer") ||
+    normalized.includes("c++")
+  ) {
+    return "Software / backend";
+  }
+
+  return "Product / research / other";
+}
+
+function bucketRecruitingSource(label: string) {
+  const normalized = label.trim().toLowerCase();
+  if (!normalized || normalized === "n/a" || normalized === "na") {
+    return null;
+  }
+
+  if (normalized.includes("did not find")) {
+    return null;
+  }
+
+  if (
+    normalized.includes("waterlooworks (first") ||
+    normalized.includes("waterlooworks (second") ||
+    normalized.includes("main round") ||
+    normalized.includes("1st round ww") ||
+    normalized.includes("2nd round ww")
+  ) {
+    return "WaterlooWorks main";
+  }
+
+  if (
+    normalized.includes("waterlooworks (continuous") ||
+    normalized.includes("continuous round") ||
+    normalized.includes("continuous ww")
+  ) {
+    return "WaterlooWorks continuous";
+  }
+
+  if (
+    normalized.includes("external") ||
+    normalized.includes("cold reachout")
+  ) {
+    return "External";
+  }
+
+  if (
+    normalized.includes("personal connection") ||
+    normalized.includes("nepotism")
+  ) {
+    return "Referral / connection";
+  }
+
+  if (
+    normalized.includes("returned to previous company") ||
+    normalized.includes("return offer")
+  ) {
+    return "Return offer";
+  }
+
+  return "Other";
+}
+
 function normalizeEmployer(name: string) {
   const normalized = name
     .trim()
@@ -341,6 +523,16 @@ type CoopLocationRow = {
   profile: string;
   totalPlacements: number;
 } & Record<(typeof LOCATION_BUCKETS)[number], number>;
+
+type CoopRoleRow = {
+  profile: string;
+  totalPlacements: number;
+} & Record<(typeof ROLE_BUCKETS)[number], number>;
+
+type CoopRecruitingRow = {
+  profile: string;
+  totalPlacements: number;
+} & Record<(typeof RECRUITING_BUCKETS)[number], number>;
 
 type SharedEmployerRow = {
   employer: string;
@@ -483,6 +675,171 @@ export const COOP_LOCATION_ANALYSIS = [
   `${usLeader.profile} sends the largest overall share to the United States at ${usLeader["United States"].toFixed(1)}% of placements.`,
 ];
 
+const roleCountsByProfile = Object.fromEntries(
+  PROFILE_IDS.map((profileId) => [
+    profileId,
+    Object.fromEntries(ROLE_BUCKETS.map((bucket) => [bucket, 0])),
+  ]),
+) as Record<ProfileId, Record<(typeof ROLE_BUCKETS)[number], number>>;
+
+for (let termNumber = 1; termNumber <= 6; termNumber += 1) {
+  for (const pair of getAnswers(
+    getItem("se_2025", `What was your co-op role? (co-op #${termNumber})`),
+  )) {
+    const bucket = bucketRole(pair.label);
+    if (bucket) {
+      roleCountsByProfile.se_2025[bucket] += pair.count;
+    }
+  }
+
+  for (const pair of getAnswers(
+    getItem("cs_2025", `What was your position (co-op #${termNumber})?`),
+  )) {
+    const bucket = bucketRole(pair.label);
+    if (bucket) {
+      roleCountsByProfile.cs_2025[bucket] += pair.count;
+    }
+  }
+
+  for (const item of getItems("ece_2025", `What was your role during co-op? [Coop ${termNumber}]`)) {
+    for (const pair of getAnswers(item)) {
+      const bucket = bucketRole(pair.label);
+      if (bucket) {
+        roleCountsByProfile.ece_2025[bucket] += pair.count;
+      }
+    }
+  }
+}
+
+const roleTotals = Object.fromEntries(
+  PROFILE_IDS.map((profileId) => [
+    profileId,
+    Object.values(roleCountsByProfile[profileId]).reduce(
+      (total, count) => total + count,
+      0,
+    ),
+  ]),
+) as Record<ProfileId, number>;
+
+export const COOP_ROLE_ROWS: CoopRoleRow[] = PROFILE_META.map((profile) => ({
+  profile: profile.shortLabel,
+  totalPlacements: roleTotals[profile.id],
+  "Software / backend":
+    (roleCountsByProfile[profile.id]["Software / backend"] / roleTotals[profile.id]) * 100,
+  "Full stack":
+    (roleCountsByProfile[profile.id]["Full stack"] / roleTotals[profile.id]) * 100,
+  "Frontend / mobile":
+    (roleCountsByProfile[profile.id]["Frontend / mobile"] / roleTotals[profile.id]) * 100,
+  "Infrastructure / DevOps":
+    (roleCountsByProfile[profile.id]["Infrastructure / DevOps"] / roleTotals[profile.id]) * 100,
+  "Data / ML":
+    (roleCountsByProfile[profile.id]["Data / ML"] / roleTotals[profile.id]) * 100,
+  "Hardware / embedded":
+    (roleCountsByProfile[profile.id]["Hardware / embedded"] / roleTotals[profile.id]) * 100,
+  "QA / test":
+    (roleCountsByProfile[profile.id]["QA / test"] / roleTotals[profile.id]) * 100,
+  "Product / research / other":
+    (roleCountsByProfile[profile.id]["Product / research / other"] / roleTotals[profile.id]) * 100,
+}));
+
+function topRoleProfile(bucket: (typeof ROLE_BUCKETS)[number]) {
+  return COOP_ROLE_ROWS.reduce((best, row) =>
+    row[bucket] > best[bucket] ? row : best,
+  );
+}
+
+const fullStackLeader = topRoleProfile("Full stack");
+const hardwareLeader = topRoleProfile("Hardware / embedded");
+const softwareLeader = topRoleProfile("Software / backend");
+
+export const COOP_ROLE_ANALYSIS = [
+  `${fullStackLeader.profile} is the most full-stack-heavy cohort, with ${fullStackLeader["Full stack"].toFixed(1)}% of recorded placements in that bucket.`,
+  `${hardwareLeader.profile} has the strongest hardware / embedded skew at ${hardwareLeader["Hardware / embedded"].toFixed(1)}%, while ${softwareLeader.profile} leads the software / backend bucket at ${softwareLeader["Software / backend"].toFixed(1)}%.`,
+];
+
+const recruitingCountsByProfile = Object.fromEntries(
+  PROFILE_IDS.map((profileId) => [
+    profileId,
+    Object.fromEntries(RECRUITING_BUCKETS.map((bucket) => [bucket, 0])),
+  ]),
+) as Record<ProfileId, Record<(typeof RECRUITING_BUCKETS)[number], number>>;
+
+for (let termNumber = 1; termNumber <= 6; termNumber += 1) {
+  for (const pair of getAnswers(
+    getItem("se_2025", `How did you find your co-op? (co-op #${termNumber})`),
+  )) {
+    const bucket = bucketRecruitingSource(pair.label);
+    if (bucket) {
+      recruitingCountsByProfile.se_2025[bucket] += pair.count;
+    }
+  }
+
+  for (const pair of getAnswers(
+    getItem("cs_2025", `How did you find your job? (co-op #${termNumber})`),
+  )) {
+    const bucket = bucketRecruitingSource(pair.label);
+    if (bucket) {
+      recruitingCountsByProfile.cs_2025[bucket] += pair.count;
+    }
+  }
+
+  for (const pair of getAnswers(
+    getItem("ece_2025", `Recruitment Event [Coop ${termNumber}]`),
+  )) {
+    const bucket = bucketRecruitingSource(pair.label);
+    if (bucket) {
+      recruitingCountsByProfile.ece_2025[bucket] += pair.count;
+    }
+  }
+}
+
+const recruitingTotals = Object.fromEntries(
+  PROFILE_IDS.map((profileId) => [
+    profileId,
+    Object.values(recruitingCountsByProfile[profileId]).reduce(
+      (total, count) => total + count,
+      0,
+    ),
+  ]),
+) as Record<ProfileId, number>;
+
+export const COOP_RECRUITING_ROWS: CoopRecruitingRow[] = PROFILE_META.map((profile) => ({
+  profile: profile.shortLabel,
+  totalPlacements: recruitingTotals[profile.id],
+  "WaterlooWorks main":
+    (recruitingCountsByProfile[profile.id]["WaterlooWorks main"] / recruitingTotals[profile.id]) *
+    100,
+  "WaterlooWorks continuous":
+    (recruitingCountsByProfile[profile.id]["WaterlooWorks continuous"] /
+      recruitingTotals[profile.id]) *
+    100,
+  External:
+    (recruitingCountsByProfile[profile.id].External / recruitingTotals[profile.id]) * 100,
+  "Referral / connection":
+    (recruitingCountsByProfile[profile.id]["Referral / connection"] /
+      recruitingTotals[profile.id]) *
+    100,
+  "Return offer":
+    (recruitingCountsByProfile[profile.id]["Return offer"] / recruitingTotals[profile.id]) * 100,
+  Other:
+    (recruitingCountsByProfile[profile.id].Other / recruitingTotals[profile.id]) * 100,
+}));
+
+function topRecruitingProfile(bucket: (typeof RECRUITING_BUCKETS)[number]) {
+  return COOP_RECRUITING_ROWS.reduce((best, row) =>
+    row[bucket] > best[bucket] ? row : best,
+  );
+}
+
+const mainRoundLeader = topRecruitingProfile("WaterlooWorks main");
+const externalLeader = topRecruitingProfile("External");
+const returnPathLeader = topRecruitingProfile("Return offer");
+
+export const COOP_RECRUITING_ANALYSIS = [
+  `${mainRoundLeader.profile} relies the most on WaterlooWorks main cycles overall, at ${mainRoundLeader["WaterlooWorks main"].toFixed(1)}% of recorded placements.`,
+  `${externalLeader.profile} has the highest external-search share at ${externalLeader.External.toFixed(1)}%, while ${returnPathLeader.profile} leads return-offer sourcing at ${returnPathLeader["Return offer"].toFixed(1)}%.`,
+];
+
 const employerCountsByProfile = Object.fromEntries(
   PROFILE_IDS.map((profileId) => [profileId, new Map<string, number>()]),
 ) as Record<ProfileId, Map<string, number>>;
@@ -569,9 +926,13 @@ export const SHARED_EMPLOYER_ANALYSIS = topSharedEmployer
     ]
   : [];
 
+export const COOP_COMPARISON_COUNT = 5;
+
 export const COOP_METHOD_NOTES = [
   "SE co-op data comes from a separate coop.json source that stores six co-op-specific distributions per question. The earlier extraction missed that file; the tracked data now includes it.",
   "Salary trend uses the median hourly co-op pay for each co-op number. SE uses exact published salary values, while CS and ECE medians are estimated from their published pay brackets.",
   "Location mix aggregates all six co-op terms into broad buckets: Remote, Ontario, Canada outside Ontario, United States, and International.",
+  "Role mix aggregates all six co-op terms into broad buckets. The ECE role prompt is duplicated in the source for two subgroups, so both published distributions are included there.",
+  "Recruiting-source mix aggregates all six co-op terms and excludes explicit no-placement responses, since those are not a sourcing channel.",
   "Shared employers aggregate recorded placements across all six co-op terms. Company names are lightly normalized for obvious variants such as AWS to Amazon and BlackBerry QNX to BlackBerry.",
 ];

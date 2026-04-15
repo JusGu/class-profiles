@@ -1,46 +1,20 @@
 import { OVERVIEW_INSIGHTS, SHARED_QUESTION_COUNT } from "@/lib/comparison-data";
-import { PROFILE_META } from "@/lib/types";
+import { COOP_COMPARISON_COUNT } from "@/lib/coop-data";
 
 export default function OverviewPanel() {
   return (
     <>
-      <div className="summary-grid">
-        <div className="summary-card">
-          <span className="summary-label">Profiles</span>
-          <strong>3</strong>
-          <p>SE 2025, CS 2025, and ECE 2025.</p>
-        </div>
-        <div className="summary-card">
-          <span className="summary-label">Shared Questions</span>
-          <strong>{SHARED_QUESTION_COUNT}</strong>
-          <p>Semantically matched and normalized for comparison.</p>
-        </div>
-        <div className="summary-card">
-          <span className="summary-label">Primary Lens</span>
-          <strong>Share of respondents</strong>
-          <p>Most charts are expressed as percentages, not raw counts.</p>
-        </div>
-      </div>
+      <h2>## scope</h2>
+      <ul>
+        <li>{SHARED_QUESTION_COUNT} strict all-three question matches across demographics, academics, and life.</li>
+        <li>{COOP_COMPARISON_COUNT} co-op comparisons built from the six term-specific co-op datasets.</li>
+        <li>Exact string overlap across all three public surveys is effectively zero, so every comparison here is manually normalized.</li>
+      </ul>
 
       <h2>## quick read</h2>
-      <div className="insight-grid">
-        {OVERVIEW_INSIGHTS.map((insight) => (
-          <section key={insight.label} className="insight-card">
-            <span className="insight-label">{insight.label}</span>
-            <p>{insight.detail}</p>
-          </section>
-        ))}
-      </div>
-
-      <h2>## cohorts</h2>
-      <ul className="profile-list">
-        {PROFILE_META.map((profile) => (
-          <li key={profile.id}>
-            <span className="profile-chip" style={{ borderColor: profile.color, color: profile.color }}>
-              {profile.shortLabel}
-            </span>
-            <span>{profile.displayName}</span>
-          </li>
+      <ul>
+        {OVERVIEW_INSIGHTS.slice(0, 4).map((insight) => (
+          <li key={insight.label}>{insight.detail}</li>
         ))}
       </ul>
     </>

@@ -229,6 +229,7 @@ function buildCategoricalQuestion(args: {
   section: ComparableQuestion["section"];
   title: string;
   kicker: string;
+  chartMode?: ComparableQuestion["chartMode"];
   note?: string;
   categories: string[];
   questions: Record<ProfileId, string>;
@@ -271,6 +272,7 @@ function buildCategoricalQuestion(args: {
     section: args.section,
     title: args.title,
     kicker: args.kicker,
+    chartMode: args.chartMode ?? "grouped",
     note: args.note,
     categories: args.categories,
     rows,
@@ -284,6 +286,7 @@ function buildBucketedQuestion(args: {
   id: string;
   title: string;
   kicker: string;
+  chartMode?: ComparableQuestion["chartMode"];
   categories: string[];
   note?: string;
   questions: Record<ProfileId, string>;
@@ -341,6 +344,7 @@ function buildBucketedQuestion(args: {
     section: "academics",
     title: args.title,
     kicker: args.kicker,
+    chartMode: args.chartMode ?? "grouped",
     note: args.note,
     categories: args.categories,
     rows,
@@ -355,6 +359,7 @@ function buildBinaryQuestion(args: {
   section: ComparableQuestion["section"];
   title: string;
   kicker: string;
+  chartMode?: ComparableQuestion["chartMode"];
   note?: string;
   questions: Record<ProfileId, string>;
   yesLabel: string;
@@ -408,6 +413,7 @@ function buildBinaryQuestion(args: {
     section: args.section,
     title: args.title,
     kicker: args.kicker,
+    chartMode: args.chartMode ?? "grouped",
     note: args.note,
     categories: [args.yesLabel, args.noLabel],
     rows,
@@ -427,6 +433,7 @@ const genderQuestion = buildCategoricalQuestion({
   section: "demographics",
   title: "Gender identity",
   kicker: "Reported respondent mix by program",
+  chartMode: "stacked",
   categories: ["Men", "Women", "Gender diverse / undisclosed"],
   questions: {
     se_2025: "What is your gender?",
@@ -460,6 +467,7 @@ const birthYearQuestion = buildCategoricalQuestion({
   section: "demographics",
   title: "Birth year",
   kicker: "Most of these cohorts cluster tightly around 2002",
+  chartMode: "stacked",
   categories: ["2000 or earlier", "2001", "2002", "2003 or later"],
   questions: {
     se_2025: "What year were you born?",
@@ -651,6 +659,7 @@ const partyFrequencyQuestion = buildCategoricalQuestion({
   section: "life",
   title: "Going out / party frequency",
   kicker: "Social frequency varies more than the demographics do",
+  chartMode: "stacked",
   categories: ["Never", "Rarely", "Monthly-ish", "Weekly or more"],
   questions: {
     se_2025: "How often do you go out/party on average?",
@@ -710,6 +719,7 @@ const burnoutQuestion = buildBinaryQuestion({
   section: "life",
   title: "Experienced burnout",
   kicker: "Burnout shows up as a majority experience in every cohort",
+  chartMode: "stacked",
   note: "CS published this question as percentages rather than raw counts, so the chart uses the published share directly for that cohort.",
   questions: {
     se_2025: "What mental health issues have you faced? [Burnout]",
@@ -754,6 +764,7 @@ const returnOfferQuestion = buildBinaryQuestion({
   section: "life",
   title: "Returning to a prior co-op employer for full-time",
   kicker: "Among respondents with a full-time role, return offers are common but not uniform",
+  chartMode: "stacked",
   note: "These denominators reflect respondents who reported on their accepted or lined-up full-time role, not the entire graduating cohort.",
   questions: {
     se_2025: "Are you returning to a previous co-op?",
@@ -788,6 +799,7 @@ const admissionsAverageQuestion = buildBucketedQuestion({
   id: "high-school-average",
   title: "High school admission average",
   kicker: "Incoming averages are compressed near the top, but not identically",
+  chartMode: "stacked",
   categories: ["<92", "92–93.9", "94–95.9", "96–97.9", "98+"],
   questions: {
     se_2025: "What was your high school admissions average?",
@@ -812,6 +824,7 @@ const failedCourseQuestion = buildBinaryQuestion({
   section: "academics",
   title: "Failed at least one course",
   kicker: "Most graduates finish without failing a course, but the rates are not identical",
+  chartMode: "stacked",
   questions: {
     se_2025: "How many classes did you fail?",
     cs_2025: "How many courses have you failed?",
@@ -855,6 +868,7 @@ const cumulativeAverageQuestion = buildBucketedQuestion({
   id: "cumulative-average",
   title: "Cumulative average",
   kicker: "Graduating performance tightens, but the right tail differs by cohort",
+  chartMode: "stacked",
   categories: ["<70", "70–79.9", "80–89.9", "90–94.9", "95+"],
   questions: {
     se_2025: "What is your cumulative average?",

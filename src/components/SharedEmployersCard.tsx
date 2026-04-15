@@ -58,8 +58,8 @@ export default function SharedEmployersCard() {
               contentStyle={{
                 background: "#282828",
                 border: "1px solid #504945",
-                borderRadius: "10px",
-                color: "#fbf1c7",
+                borderRadius: "0",
+                color: "#ebdbb2",
               }}
               formatter={(value: number, name, item) => {
                 const rawCount = (item.payload as Record<string, number>)[`${name}_count`];
@@ -90,7 +90,7 @@ export default function SharedEmployersCard() {
         ))}
       </ul>
 
-      <p className="question-note">{COOP_METHOD_NOTES[3]}</p>
+      <p className="question-note">{COOP_METHOD_NOTES[5]}</p>
     </section>
   );
 }

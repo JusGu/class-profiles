@@ -1,5 +1,7 @@
 import Editor from "@/components/Editor";
+import CoopRecruitingSourceCard from "@/components/CoopRecruitingSourceCard";
 import CoopLocationMixCard from "@/components/CoopLocationMixCard";
+import CoopRoleMixCard from "@/components/CoopRoleMixCard";
 import CoopSalaryTrendCard from "@/components/CoopSalaryTrendCard";
 import SharedEmployersCard from "@/components/SharedEmployersCard";
 import { COOP_METHOD_NOTES } from "@/lib/coop-data";
@@ -9,18 +11,15 @@ export default function CoopPage() {
     <Editor>
       <h1># coop.md</h1>
       <p className="lede">
-        This tab compares co-op outcomes using the data all three profiles
-        actually publish well: salary progression by co-op number, overall
-        location mix, and the employers that show up across all three cohorts.
-      </p>
-      <p className="lede">
-        The main source fix here is on the SE side. Its co-op distributions live
-        in a separate `coop.json` file, so the earlier extraction understated
-        what was available.
+        This tab aggregates the co-op data that all three profiles actually
+        publish well: pay, role mix, recruiting source, location mix, and the
+        employers that show up across all three cohorts.
       </p>
 
       <div className="question-stack">
         <CoopSalaryTrendCard />
+        <CoopRoleMixCard />
+        <CoopRecruitingSourceCard />
         <CoopLocationMixCard />
         <SharedEmployersCard />
       </div>
