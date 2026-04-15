@@ -1,0 +1,25 @@
+{
+  "name": "class-profiles",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@webtui/css": "^0.1.6",
+    "@webtui/theme-gruvbox": "^0.0.1",
+    "next": "^16.1.6",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "recharts": "^2.15.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.50",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "typescript": "^5.8.3"
+  }
+}
