@@ -749,6 +749,33 @@ burnoutQuestion.sampleLabels = {
   cs_2025: "published %",
 };
 
+const returnOfferQuestion = buildBinaryQuestion({
+  id: "return-offer",
+  section: "life",
+  title: "Returning to a prior co-op employer for full-time",
+  kicker: "Among respondents with a full-time role, return offers are common but not uniform",
+  note: "These denominators reflect respondents who reported on their accepted or lined-up full-time role, not the entire graduating cohort.",
+  questions: {
+    se_2025: "Are you returning to a previous co-op?",
+    cs_2025: "Is this a return offer from a prior co-op?",
+    ece_2025: "Will you be returning to a prior co-op employer for full-time?",
+  },
+  yesLabel: "Return offer",
+  noLabel: "New employer",
+  getYesCount(_profileId, item) {
+    return getCategoricalPairs(item).find((pair) => pair.label === "Yes")?.count ?? 0;
+  },
+  analysis(rows) {
+    const yesRow = rows.find((row) => row.category === "Return offer")!;
+    const leader = topProfileForCategory(rows, "Return offer");
+    const lowest = bottomProfileForCategory(rows, "Return offer");
+    return [
+      `${getProfileMeta(leader).shortLabel} is most likely to convert co-op into full-time, with ${formatPercent(yesRow[leader])} returning to a prior employer.`,
+      `${getProfileMeta(lowest).shortLabel} is lowest at ${formatPercent(yesRow[lowest])}, but return offers still make up a large minority of outcomes in every profile.`,
+    ];
+  },
+});
+
 function admissionsBucket(value: number) {
   if (value < 92) return "<92";
   if (value < 94) return "92–93.9";
@@ -776,6 +803,42 @@ const admissionsAverageQuestion = buildBucketedQuestion({
     return [
       `${getProfileMeta(topLeader).shortLabel} has the strongest ultra-high tail, with ${formatPercent(topBucket[topLeader])} reporting a 98+ admission average.`,
       `${getProfileMeta(lowLeader).shortLabel} has the largest share below 92 at ${formatPercent(lowBucket[lowLeader])}, though every cohort remains concentrated above 94.`,
+    ];
+  },
+});
+
+const failedCourseQuestion = buildBinaryQuestion({
+  id: "failed-course",
+  section: "academics",
+  title: "Failed at least one course",
+  kicker: "Most graduates finish without failing a course, but the rates are not identical",
+  questions: {
+    se_2025: "How many classes did you fail?",
+    cs_2025: "How many courses have you failed?",
+    ece_2025: "Did you ever fail a... [Course?]",
+  },
+  yesLabel: "Failed 1+ course",
+  noLabel: "No failed courses",
+  getYesCount(profileId, item) {
+    const pairs = getCategoricalPairs(item);
+
+    if (profileId === "ece_2025") {
+      return pairs
+        .filter((pair) => pair.label !== "No")
+        .reduce((sum, pair) => sum + pair.count, 0);
+    }
+
+    return pairs
+      .filter((pair) => pair.label !== "0")
+      .reduce((sum, pair) => sum + pair.count, 0);
+  },
+  analysis(rows) {
+    const yesRow = rows.find((row) => row.category === "Failed 1+ course")!;
+    const leader = topProfileForCategory(rows, "Failed 1+ course");
+    const lowest = bottomProfileForCategory(rows, "Failed 1+ course");
+    return [
+      `${getProfileMeta(leader).shortLabel} has the highest course-failure share at ${formatPercent(yesRow[leader])}, while ${getProfileMeta(lowest).shortLabel} is lowest at ${formatPercent(yesRow[lowest])}.`,
+      `The distribution still skews heavily toward zero failed courses in all three cohorts, so this is a difference in tail risk, not the dominant experience.`,
     ];
   },
 });
@@ -842,7 +905,9 @@ export const COMPARABLE_QUESTIONS: ComparableQuestion[] = [
   sexualityQuestion,
   partyFrequencyQuestion,
   burnoutQuestion,
+  returnOfferQuestion,
   admissionsAverageQuestion,
+  failedCourseQuestion,
   cumulativeAverageQuestion,
 ];
 
