@@ -34,7 +34,7 @@ export const PROFILE_META: ProfileMeta[] = [
     id: "ece_2025",
     shortLabel: "ECE",
     displayName: "Electrical & Computer Engineering 2025",
-    color: "#b16286",
+    color: "#458588",
   },
 ];
 

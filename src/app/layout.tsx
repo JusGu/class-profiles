@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
+import { JetBrains_Mono } from "next/font/google";
 import "@/app/globals.css";
 import TabBar from "@/components/TabBar";
 import StatusBar from "@/components/StatusBar";
+
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-mono",
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   title: "Compare Class Profiles",
@@ -15,8 +21,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body>
+    <html lang="en" data-webtui-theme="gruvbox-dark-hard">
+      <body className={jetbrainsMono.variable}>
         <div className="ide-container">
           <div className="ide-main">
             <div className="editor-area">
