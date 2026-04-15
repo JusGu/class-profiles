@@ -15,6 +15,10 @@ type RawDataFile = {
 const raw = rawData as RawDataFile;
 
 const PROFILE_IDS: ProfileId[] = PROFILE_META.map((profile) => profile.id);
+function getProfileMeta(profileId: ProfileId) {
+  return PROFILE_META.find((profile) => profile.id === profileId)!;
+}
+
 const LOCATION_BUCKETS = [
   "Remote",
   "Ontario",
@@ -24,14 +28,14 @@ const LOCATION_BUCKETS = [
 ] as const;
 
 const ROLE_BUCKETS = [
-  "Software / backend",
+  "Backend / general SWE",
   "Full stack",
   "Frontend / mobile",
   "Infrastructure / DevOps",
   "Data / ML",
   "Hardware / embedded",
   "QA / test",
-  "Product / research / other",
+  "Research / PM / other",
 ] as const;
 
 const RECRUITING_BUCKETS = [
@@ -368,7 +372,8 @@ function bucketRole(label: string) {
     normalized.includes("site reliability") ||
     normalized.includes("sre") ||
     normalized.includes("cloud") ||
-    normalized.includes("systems administrator")
+    normalized.includes("systems administrator") ||
+    normalized.includes("security")
   ) {
     return "Infrastructure / DevOps";
   }
@@ -377,7 +382,8 @@ function bucketRole(label: string) {
     normalized.includes("machine learning") ||
     normalized.includes("ml") ||
     normalized.includes("data") ||
-    normalized.includes("analytics")
+    normalized.includes("analytics") ||
+    normalized.includes("quant")
   ) {
     return "Data / ML";
   }
@@ -419,7 +425,7 @@ function bucketRole(label: string) {
     normalized.includes("other") ||
     normalized.includes("it")
   ) {
-    return "Product / research / other";
+    return "Research / PM / other";
   }
 
   if (
@@ -431,10 +437,10 @@ function bucketRole(label: string) {
     normalized.includes("programmer") ||
     normalized.includes("c++")
   ) {
-    return "Software / backend";
+    return "Backend / general SWE";
   }
 
-  return "Product / research / other";
+  return "Research / PM / other";
 }
 
 function bucketRecruitingSource(label: string) {
@@ -525,9 +531,11 @@ type CoopLocationRow = {
 } & Record<(typeof LOCATION_BUCKETS)[number], number>;
 
 type CoopRoleRow = {
-  profile: string;
-  totalPlacements: number;
-} & Record<(typeof ROLE_BUCKETS)[number], number>;
+  category: string;
+  se_2025: number;
+  cs_2025: number;
+  ece_2025: number;
+};
 
 type CoopRecruitingRow = {
   profile: string;
@@ -675,86 +683,83 @@ export const COOP_LOCATION_ANALYSIS = [
   `${usLeader.profile} sends the largest overall share to the United States at ${usLeader["United States"].toFixed(1)}% of placements.`,
 ];
 
-const roleCountsByProfile = Object.fromEntries(
+const latestRoleCountsByProfile = Object.fromEntries(
   PROFILE_IDS.map((profileId) => [
     profileId,
     Object.fromEntries(ROLE_BUCKETS.map((bucket) => [bucket, 0])),
   ]),
 ) as Record<ProfileId, Record<(typeof ROLE_BUCKETS)[number], number>>;
 
-for (let termNumber = 1; termNumber <= 6; termNumber += 1) {
-  for (const pair of getAnswers(
-    getItem("se_2025", `What was your co-op role? (co-op #${termNumber})`),
-  )) {
+for (const pair of getAnswers(
+  getItem("se_2025", "What was your co-op role? (co-op #6)"),
+)) {
+  const bucket = bucketRole(pair.label);
+  if (bucket) {
+    latestRoleCountsByProfile.se_2025[bucket] += pair.count;
+  }
+}
+
+for (const pair of getAnswers(
+  getItem("cs_2025", "What was your position (co-op #6)?"),
+)) {
+  const bucket = bucketRole(pair.label);
+  if (bucket) {
+    latestRoleCountsByProfile.cs_2025[bucket] += pair.count;
+  }
+}
+
+for (const item of getItems("ece_2025", "What was your role during co-op? [Coop 6]")) {
+  for (const pair of getAnswers(item)) {
     const bucket = bucketRole(pair.label);
     if (bucket) {
-      roleCountsByProfile.se_2025[bucket] += pair.count;
-    }
-  }
-
-  for (const pair of getAnswers(
-    getItem("cs_2025", `What was your position (co-op #${termNumber})?`),
-  )) {
-    const bucket = bucketRole(pair.label);
-    if (bucket) {
-      roleCountsByProfile.cs_2025[bucket] += pair.count;
-    }
-  }
-
-  for (const item of getItems("ece_2025", `What was your role during co-op? [Coop ${termNumber}]`)) {
-    for (const pair of getAnswers(item)) {
-      const bucket = bucketRole(pair.label);
-      if (bucket) {
-        roleCountsByProfile.ece_2025[bucket] += pair.count;
-      }
+      latestRoleCountsByProfile.ece_2025[bucket] += pair.count;
     }
   }
 }
 
-const roleTotals = Object.fromEntries(
-  PROFILE_IDS.map((profileId) => [
-    profileId,
-    Object.values(roleCountsByProfile[profileId]).reduce(
-      (total, count) => total + count,
-      0,
-    ),
-  ]),
-) as Record<ProfileId, number>;
+export const COOP_ROLE_SAMPLE_SIZES = {
+  se_2025: (
+    getItem("se_2025", "What was your co-op role? (co-op #6)")["n"] as number
+  ) ?? 0,
+  cs_2025: (
+    getItem("cs_2025", "What was your position (co-op #6)?")["inferred_n"] as number
+  ) ?? 0,
+  ece_2025: getItems("ece_2025", "What was your role during co-op? [Coop 6]").reduce(
+    (total, item) => total + ((item["n"] as number) ?? 0),
+    0,
+  ),
+} as const;
 
-export const COOP_ROLE_ROWS: CoopRoleRow[] = PROFILE_META.map((profile) => ({
-  profile: profile.shortLabel,
-  totalPlacements: roleTotals[profile.id],
-  "Software / backend":
-    (roleCountsByProfile[profile.id]["Software / backend"] / roleTotals[profile.id]) * 100,
-  "Full stack":
-    (roleCountsByProfile[profile.id]["Full stack"] / roleTotals[profile.id]) * 100,
-  "Frontend / mobile":
-    (roleCountsByProfile[profile.id]["Frontend / mobile"] / roleTotals[profile.id]) * 100,
-  "Infrastructure / DevOps":
-    (roleCountsByProfile[profile.id]["Infrastructure / DevOps"] / roleTotals[profile.id]) * 100,
-  "Data / ML":
-    (roleCountsByProfile[profile.id]["Data / ML"] / roleTotals[profile.id]) * 100,
-  "Hardware / embedded":
-    (roleCountsByProfile[profile.id]["Hardware / embedded"] / roleTotals[profile.id]) * 100,
-  "QA / test":
-    (roleCountsByProfile[profile.id]["QA / test"] / roleTotals[profile.id]) * 100,
-  "Product / research / other":
-    (roleCountsByProfile[profile.id]["Product / research / other"] / roleTotals[profile.id]) * 100,
-}));
+function roleShare(profileId: ProfileId, bucket: (typeof ROLE_BUCKETS)[number]) {
+  const total = COOP_ROLE_SAMPLE_SIZES[profileId];
+  return total > 0 ? (latestRoleCountsByProfile[profileId][bucket] / total) * 100 : 0;
+}
 
-function topRoleProfile(bucket: (typeof ROLE_BUCKETS)[number]) {
-  return COOP_ROLE_ROWS.reduce((best, row) =>
-    row[bucket] > best[bucket] ? row : best,
+export const COOP_ROLE_ROWS: CoopRoleRow[] = ROLE_BUCKETS.map((bucket) => ({
+  category: bucket,
+  se_2025: roleShare("se_2025", bucket),
+  cs_2025: roleShare("cs_2025", bucket),
+  ece_2025: roleShare("ece_2025", bucket),
+})).filter(
+  (row) => Math.max(row.se_2025, row.cs_2025, row.ece_2025) >= 4,
+);
+
+function topRoleProfile(row: CoopRoleRow) {
+  return PROFILE_IDS.reduce((best, profileId) =>
+    row[profileId] > row[best] ? profileId : best,
   );
 }
 
-const fullStackLeader = topRoleProfile("Full stack");
-const hardwareLeader = topRoleProfile("Hardware / embedded");
-const softwareLeader = topRoleProfile("Software / backend");
+const fullStackRow = COOP_ROLE_ROWS.find((row) => row.category === "Full stack")!;
+const hardwareRow = COOP_ROLE_ROWS.find((row) => row.category === "Hardware / embedded")!;
+const backendRow = COOP_ROLE_ROWS.find((row) => row.category === "Backend / general SWE")!;
+const fullStackLeader = topRoleProfile(fullStackRow);
+const hardwareLeader = topRoleProfile(hardwareRow);
+const backendLeader = topRoleProfile(backendRow);
 
 export const COOP_ROLE_ANALYSIS = [
-  `${fullStackLeader.profile} is the most full-stack-heavy cohort, with ${fullStackLeader["Full stack"].toFixed(1)}% of recorded placements in that bucket.`,
-  `${hardwareLeader.profile} has the strongest hardware / embedded skew at ${hardwareLeader["Hardware / embedded"].toFixed(1)}%, while ${softwareLeader.profile} leads the software / backend bucket at ${softwareLeader["Software / backend"].toFixed(1)}%.`,
+  `${getProfileMeta(backendLeader).shortLabel} skews most toward backend / general SWE in co-op #6 at ${backendRow[backendLeader].toFixed(1)}%.`,
+  `${getProfileMeta(hardwareLeader).shortLabel} is the most hardware-heavy in co-op #6 at ${hardwareRow[hardwareLeader].toFixed(1)}%, while ${getProfileMeta(fullStackLeader).shortLabel} leads the full-stack bucket at ${fullStackRow[fullStackLeader].toFixed(1)}%.`,
 ];
 
 const recruitingCountsByProfile = Object.fromEntries(
@@ -932,7 +937,7 @@ export const COOP_METHOD_NOTES = [
   "SE co-op data comes from a separate coop.json source that stores six co-op-specific distributions per question. The earlier extraction missed that file; the tracked data now includes it.",
   "Salary trend uses the median hourly co-op pay for each co-op number. SE uses exact published salary values, while CS and ECE medians are estimated from their published pay brackets.",
   "Location mix aggregates all six co-op terms into broad buckets: Remote, Ontario, Canada outside Ontario, United States, and International.",
-  "Role mix aggregates all six co-op terms into broad buckets. The ECE role prompt is duplicated in the source for two subgroups, so both published distributions are included there.",
+  "Role mix now uses co-op #6 only rather than aggregating all six placements. The ECE co-op #6 role prompt is split into two subgroup charts in the source, so both published distributions are combined there.",
   "Recruiting-source mix aggregates all six co-op terms and excludes explicit no-placement responses, since those are not a sourcing channel.",
   "Shared employers aggregate recorded placements across all six co-op terms. Company names are lightly normalized for obvious variants such as AWS to Amazon and BlackBerry QNX to BlackBerry.",
 ];

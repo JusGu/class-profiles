@@ -11,9 +11,9 @@ export default function CoopPage() {
     <Editor>
       <h1># coop.md</h1>
       <p className="lede">
-        This tab aggregates the co-op data that all three profiles actually
-        publish well: pay, role mix, recruiting source, location mix, and the
-        employers that show up across all three cohorts.
+        This tab compares the co-op data that all three profiles publish
+        cleanly: salary progression, latest-role mix, recruiting source,
+        location mix, and shared employers.
       </p>
 
       <div className="question-stack">
