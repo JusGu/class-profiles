@@ -1,0 +1,22 @@
+{
+  "generated_at": "2026-04-15T18:07:08.242Z",
+  "main_combined_file": "data/class-profiles-question-answer-data.json",
+  "notes_file": "data/class-profiles-question-answer-notes.md",
+  "profiles": {
+    "se_2025": {
+      "profile": "SE 2025",
+      "item_count": 288,
+      "file": "data/class-profile-qa/se_2025.json"
+    },
+    "cs_2025": {
+      "profile": "CS 2025",
+      "item_count": 145,
+      "file": "data/class-profile-qa/cs_2025.json"
+    },
+    "ece_2025": {
+      "profile": "ECE 2025",
+      "item_count": 260,
+      "file": "data/class-profile-qa/ece_2025.json"
+    }
+  }
+}
