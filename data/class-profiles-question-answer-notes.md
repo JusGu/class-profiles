@@ -14,7 +14,8 @@ What is in the JSON:
 Important caveats:
 - `SE 2025`: all 288 items are exact `labels + counts + n` payloads from the local cleaned JSON files.
 - `ECE 2025`: all 260 items come from the live `results.json`, which mixes count charts, word clouds, numeric distributions, two-part charts, flow data, and open-ended responses.
-- `CS 2025`: 145 items were recovered from the live published Next.js route chunks. Counts and raw response lists are available, but explicit `n` is usually not published in those chunks.
+- `CS 2025`: 150 items were recovered from the live published Next.js route chunks. Counts and raw response lists are available, but explicit `n` is usually not published in those chunks.
 - `CS 2025` now includes `inferred_n` where it can be recovered directly from the published payload, plus `selection_count_sum` for count-based charts where a raw sum exists but may not equal respondents.
 - `CS 2025` academics includes both compressed and expanded chart states; the extractor keeps the richer version for duplicate question titles.
 - `CS 2025` co-op dynamic titles were expanded by rendering all six co-op states.
+- `CS 2025` also expands the otherwise static co-op salary question into six separate items, one for each co-op term.

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-15T18:07:08.242Z",
+  "generated_at": "2026-04-15T18:18:17.378Z",
   "profile_key": "cs_2025",
   "profile": "CS 2025",
   "source_kind": "live_next_route_chunks",
@@ -52,7 +52,7 @@
       "chunk_url": "https://csclub.uwaterloo.ca/classprofile/2025/_next/static/chunks/app/personal/page-d8be1a5a412badf2.js"
     }
   ],
-  "item_count": 145,
+  "item_count": 150,
   "item_notes": [
     "Interactive route states were rendered to capture co-op #1-#6 and the full academic chart variants.",
     "The published chunks usually expose counts or raw response lists, but they generally do not expose an explicit n value."
@@ -5932,10 +5932,11 @@
     },
     {
       "route": "coop",
-      "question": "What was your salary per hour in CAD (excluding other forms of compensation)?",
+      "question": "What was your salary per hour in CAD (excluding other forms of compensation)? (co-op #1)",
+      "base_question": "What was your salary per hour in CAD (excluding other forms of compensation)?",
       "page_url": "https://csclub.uwaterloo.ca/classprofile/2025/coop",
       "chunk_url": "https://csclub.uwaterloo.ca/classprofile/2025/_next/static/chunks/app/coop/page-370a1a4705b13121.js",
-      "render_state": 5,
+      "render_state": 0,
       "answer_type": "categorical_counts",
       "commentary": [],
       "chart_blocks": [
@@ -5945,19 +5946,19 @@
           "data": [
             {
               "category": "0-15",
-              "value": 0
+              "value": 5
             },
             {
               "category": "15-20",
-              "value": 0
+              "value": 49
             },
             {
               "category": "20-25",
-              "value": 1
+              "value": 47
             },
             {
               "category": "25-30",
-              "value": 6
+              "value": 13
             },
             {
               "category": "30-35",
@@ -5965,87 +5966,37 @@
             },
             {
               "category": "35-40",
-              "value": 11
-            },
-            {
-              "category": "40-45",
-              "value": 9
-            },
-            {
-              "category": "45-50",
-              "value": 13
-            },
-            {
-              "category": "50-55",
-              "value": 3
-            },
-            {
-              "category": "55-60",
-              "value": 5
-            },
-            {
-              "category": "60-65",
-              "value": 2
-            },
-            {
-              "category": "65-70",
-              "value": 10
-            },
-            {
-              "category": "70-75",
-              "value": 5
-            },
-            {
-              "category": "75-80",
-              "value": 4
-            },
-            {
-              "category": "80-85",
               "value": 0
             },
             {
-              "category": "85-90",
-              "value": 4
+              "category": "40-45",
+              "value": 0
             },
             {
-              "category": "90-95",
-              "value": 1
+              "category": "45-50",
+              "value": 0
             },
             {
-              "category": "95-100",
-              "value": 2
-            },
-            {
-              "category": "100-105",
-              "value": 1
-            },
-            {
-              "category": "105-110",
-              "value": 1
-            },
-            {
-              "category": "150",
-              "value": 1
-            },
-            {
-              "category": "166",
+              "category": "50-55",
               "value": 1
             }
           ],
           "props": {
             "lines": [
               0,
-              5,
               10,
-              15
+              20,
+              30,
+              40,
+              50
             ],
             "narrow": true
           },
-          "count_sum": 82
+          "count_sum": 117
         }
       ],
-      "selection_count_sum": 82,
-      "inferred_n": 82,
+      "selection_count_sum": 117,
+      "inferred_n": 117,
       "inferred_n_method": "sum_of_exclusive_category_counts"
     },
     {
@@ -6806,6 +6757,83 @@
       ],
       "selection_count_sum": 113,
       "inferred_n": 113,
+      "inferred_n_method": "sum_of_exclusive_category_counts"
+    },
+    {
+      "route": "coop",
+      "question": "What was your salary per hour in CAD (excluding other forms of compensation)? (co-op #2)",
+      "base_question": "What was your salary per hour in CAD (excluding other forms of compensation)?",
+      "page_url": "https://csclub.uwaterloo.ca/classprofile/2025/coop",
+      "chunk_url": "https://csclub.uwaterloo.ca/classprofile/2025/_next/static/chunks/app/coop/page-370a1a4705b13121.js",
+      "render_state": 1,
+      "answer_type": "categorical_counts",
+      "commentary": [],
+      "chart_blocks": [
+        {
+          "component": "7899.A",
+          "data_type": "categorical_counts",
+          "data": [
+            {
+              "category": "0-15",
+              "value": 0
+            },
+            {
+              "category": "15-20",
+              "value": 3
+            },
+            {
+              "category": "20-25",
+              "value": 57
+            },
+            {
+              "category": "25-30",
+              "value": 29
+            },
+            {
+              "category": "30-35",
+              "value": 28
+            },
+            {
+              "category": "35-40",
+              "value": 4
+            },
+            {
+              "category": "40-45",
+              "value": 2
+            },
+            {
+              "category": "45-50",
+              "value": 3
+            },
+            {
+              "category": "50-55",
+              "value": 1
+            },
+            {
+              "category": "55-60",
+              "value": 1
+            },
+            {
+              "category": "60-65",
+              "value": 1
+            }
+          ],
+          "props": {
+            "lines": [
+              0,
+              10,
+              20,
+              30,
+              40,
+              50
+            ],
+            "narrow": true
+          },
+          "count_sum": 129
+        }
+      ],
+      "selection_count_sum": 129,
+      "inferred_n": 129,
       "inferred_n_method": "sum_of_exclusive_category_counts"
     },
     {
@@ -7623,6 +7651,110 @@
     },
     {
       "route": "coop",
+      "question": "What was your salary per hour in CAD (excluding other forms of compensation)? (co-op #3)",
+      "base_question": "What was your salary per hour in CAD (excluding other forms of compensation)?",
+      "page_url": "https://csclub.uwaterloo.ca/classprofile/2025/coop",
+      "chunk_url": "https://csclub.uwaterloo.ca/classprofile/2025/_next/static/chunks/app/coop/page-370a1a4705b13121.js",
+      "render_state": 2,
+      "answer_type": "categorical_counts",
+      "commentary": [],
+      "chart_blocks": [
+        {
+          "component": "7899.A",
+          "data_type": "categorical_counts",
+          "data": [
+            {
+              "category": "0-15",
+              "value": 0
+            },
+            {
+              "category": "15-20",
+              "value": 1
+            },
+            {
+              "category": "20-25",
+              "value": 19
+            },
+            {
+              "category": "25-30",
+              "value": 40
+            },
+            {
+              "category": "30-35",
+              "value": 22
+            },
+            {
+              "category": "35-40",
+              "value": 15
+            },
+            {
+              "category": "40-45",
+              "value": 5
+            },
+            {
+              "category": "45-50",
+              "value": 5
+            },
+            {
+              "category": "50-55",
+              "value": 0
+            },
+            {
+              "category": "55-60",
+              "value": 2
+            },
+            {
+              "category": "60-65",
+              "value": 3
+            },
+            {
+              "category": "65-70",
+              "value": 4
+            },
+            {
+              "category": "70-75",
+              "value": 0
+            },
+            {
+              "category": "75-80",
+              "value": 2
+            },
+            {
+              "category": "80-85",
+              "value": 1
+            },
+            {
+              "category": "85-90",
+              "value": 0
+            },
+            {
+              "category": "90-95",
+              "value": 0
+            },
+            {
+              "category": "95-100",
+              "value": 1
+            }
+          ],
+          "props": {
+            "lines": [
+              0,
+              10,
+              20,
+              30,
+              40
+            ],
+            "narrow": true
+          },
+          "count_sum": 120
+        }
+      ],
+      "selection_count_sum": 120,
+      "inferred_n": 120,
+      "inferred_n_method": "sum_of_exclusive_category_counts"
+    },
+    {
+      "route": "coop",
       "question": "How did you find your job? (co-op #3)",
       "page_url": "https://csclub.uwaterloo.ca/classprofile/2025/coop",
       "chunk_url": "https://csclub.uwaterloo.ca/classprofile/2025/_next/static/chunks/app/coop/page-370a1a4705b13121.js",
@@ -8406,6 +8538,113 @@
     },
     {
       "route": "coop",
+      "question": "What was your salary per hour in CAD (excluding other forms of compensation)? (co-op #4)",
+      "base_question": "What was your salary per hour in CAD (excluding other forms of compensation)?",
+      "page_url": "https://csclub.uwaterloo.ca/classprofile/2025/coop",
+      "chunk_url": "https://csclub.uwaterloo.ca/classprofile/2025/_next/static/chunks/app/coop/page-370a1a4705b13121.js",
+      "render_state": 3,
+      "answer_type": "categorical_counts",
+      "commentary": [],
+      "chart_blocks": [
+        {
+          "component": "7899.A",
+          "data_type": "categorical_counts",
+          "data": [
+            {
+              "category": "0-15",
+              "value": 1
+            },
+            {
+              "category": "15-20",
+              "value": 1
+            },
+            {
+              "category": "20-25",
+              "value": 7
+            },
+            {
+              "category": "25-30",
+              "value": 27
+            },
+            {
+              "category": "30-35",
+              "value": 19
+            },
+            {
+              "category": "35-40",
+              "value": 14
+            },
+            {
+              "category": "40-45",
+              "value": 12
+            },
+            {
+              "category": "45-50",
+              "value": 8
+            },
+            {
+              "category": "50-55",
+              "value": 5
+            },
+            {
+              "category": "55-60",
+              "value": 1
+            },
+            {
+              "category": "60-65",
+              "value": 3
+            },
+            {
+              "category": "65-70",
+              "value": 10
+            },
+            {
+              "category": "70-75",
+              "value": 3
+            },
+            {
+              "category": "75-80",
+              "value": 2
+            },
+            {
+              "category": "80-85",
+              "value": 3
+            },
+            {
+              "category": "85-90",
+              "value": 1
+            },
+            {
+              "category": "90-95",
+              "value": 0
+            },
+            {
+              "category": "95-100",
+              "value": 1
+            },
+            {
+              "category": "155-160",
+              "value": 1
+            }
+          ],
+          "props": {
+            "lines": [
+              0,
+              10,
+              20,
+              30
+            ],
+            "narrow": true
+          },
+          "count_sum": 119
+        }
+      ],
+      "selection_count_sum": 119,
+      "inferred_n": 119,
+      "inferred_n_method": "sum_of_exclusive_category_counts"
+    },
+    {
+      "route": "coop",
       "question": "How did you find your job? (co-op #4)",
       "page_url": "https://csclub.uwaterloo.ca/classprofile/2025/coop",
       "chunk_url": "https://csclub.uwaterloo.ca/classprofile/2025/_next/static/chunks/app/coop/page-370a1a4705b13121.js",
@@ -9100,6 +9339,116 @@
     },
     {
       "route": "coop",
+      "question": "What was your salary per hour in CAD (excluding other forms of compensation)? (co-op #5)",
+      "base_question": "What was your salary per hour in CAD (excluding other forms of compensation)?",
+      "page_url": "https://csclub.uwaterloo.ca/classprofile/2025/coop",
+      "chunk_url": "https://csclub.uwaterloo.ca/classprofile/2025/_next/static/chunks/app/coop/page-370a1a4705b13121.js",
+      "render_state": 4,
+      "answer_type": "categorical_counts",
+      "commentary": [],
+      "chart_blocks": [
+        {
+          "component": "7899.A",
+          "data_type": "categorical_counts",
+          "data": [
+            {
+              "category": "0-15",
+              "value": 0
+            },
+            {
+              "category": "15-20",
+              "value": 1
+            },
+            {
+              "category": "20-25",
+              "value": 1
+            },
+            {
+              "category": "25-30",
+              "value": 10
+            },
+            {
+              "category": "30-35",
+              "value": 14
+            },
+            {
+              "category": "35-40",
+              "value": 19
+            },
+            {
+              "category": "40-45",
+              "value": 11
+            },
+            {
+              "category": "45-50",
+              "value": 14
+            },
+            {
+              "category": "50-55",
+              "value": 8
+            },
+            {
+              "category": "55-60",
+              "value": 8
+            },
+            {
+              "category": "60-65",
+              "value": 3
+            },
+            {
+              "category": "65-70",
+              "value": 9
+            },
+            {
+              "category": "70-75",
+              "value": 4
+            },
+            {
+              "category": "75-80",
+              "value": 2
+            },
+            {
+              "category": "80-85",
+              "value": 1
+            },
+            {
+              "category": "85-90",
+              "value": 1
+            },
+            {
+              "category": "90-95",
+              "value": 3
+            },
+            {
+              "category": "95-100",
+              "value": 4
+            },
+            {
+              "category": "100-105",
+              "value": 1
+            },
+            {
+              "category": "250",
+              "value": 1
+            }
+          ],
+          "props": {
+            "lines": [
+              0,
+              10,
+              20
+            ],
+            "narrow": true
+          },
+          "count_sum": 115
+        }
+      ],
+      "selection_count_sum": 115,
+      "inferred_n": 115,
+      "inferred_n_method": "sum_of_exclusive_category_counts"
+    },
+    {
+      "route": "coop",
       "question": "How did you find your job? (co-op #5)",
       "page_url": "https://csclub.uwaterloo.ca/classprofile/2025/coop",
       "chunk_url": "https://csclub.uwaterloo.ca/classprofile/2025/_next/static/chunks/app/coop/page-370a1a4705b13121.js",
@@ -9637,6 +9986,125 @@
       ],
       "selection_count_sum": 78,
       "inferred_n": 78,
+      "inferred_n_method": "sum_of_exclusive_category_counts"
+    },
+    {
+      "route": "coop",
+      "question": "What was your salary per hour in CAD (excluding other forms of compensation)? (co-op #6)",
+      "base_question": "What was your salary per hour in CAD (excluding other forms of compensation)?",
+      "page_url": "https://csclub.uwaterloo.ca/classprofile/2025/coop",
+      "chunk_url": "https://csclub.uwaterloo.ca/classprofile/2025/_next/static/chunks/app/coop/page-370a1a4705b13121.js",
+      "render_state": 5,
+      "answer_type": "categorical_counts",
+      "commentary": [],
+      "chart_blocks": [
+        {
+          "component": "7899.A",
+          "data_type": "categorical_counts",
+          "data": [
+            {
+              "category": "0-15",
+              "value": 0
+            },
+            {
+              "category": "15-20",
+              "value": 0
+            },
+            {
+              "category": "20-25",
+              "value": 1
+            },
+            {
+              "category": "25-30",
+              "value": 6
+            },
+            {
+              "category": "30-35",
+              "value": 2
+            },
+            {
+              "category": "35-40",
+              "value": 11
+            },
+            {
+              "category": "40-45",
+              "value": 9
+            },
+            {
+              "category": "45-50",
+              "value": 13
+            },
+            {
+              "category": "50-55",
+              "value": 3
+            },
+            {
+              "category": "55-60",
+              "value": 5
+            },
+            {
+              "category": "60-65",
+              "value": 2
+            },
+            {
+              "category": "65-70",
+              "value": 10
+            },
+            {
+              "category": "70-75",
+              "value": 5
+            },
+            {
+              "category": "75-80",
+              "value": 4
+            },
+            {
+              "category": "80-85",
+              "value": 0
+            },
+            {
+              "category": "85-90",
+              "value": 4
+            },
+            {
+              "category": "90-95",
+              "value": 1
+            },
+            {
+              "category": "95-100",
+              "value": 2
+            },
+            {
+              "category": "100-105",
+              "value": 1
+            },
+            {
+              "category": "105-110",
+              "value": 1
+            },
+            {
+              "category": "150",
+              "value": 1
+            },
+            {
+              "category": "166",
+              "value": 1
+            }
+          ],
+          "props": {
+            "lines": [
+              0,
+              5,
+              10,
+              15
+            ],
+            "narrow": true
+          },
+          "count_sum": 82
+        }
+      ],
+      "selection_count_sum": 82,
+      "inferred_n": 82,
       "inferred_n_method": "sum_of_exclusive_category_counts"
     },
     {

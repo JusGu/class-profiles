@@ -11,5 +11,5 @@ Main combined file:
 
 Counts:
 - `SE 2025`: 288
-- `CS 2025`: 145
+- `CS 2025`: 150
 - `ECE 2025`: 260
