@@ -282,6 +282,55 @@ function median(values: number[]) {
   return (sorted[midpoint - 1] + sorted[midpoint]) / 2;
 }
 
+function quantile(sortedValues: number[], position: number) {
+  if (sortedValues.length === 0) return null;
+  if (sortedValues.length === 1) return sortedValues[0];
+
+  const index = (sortedValues.length - 1) * position;
+  const lowerIndex = Math.floor(index);
+  const upperIndex = Math.ceil(index);
+  const weight = index - lowerIndex;
+
+  if (lowerIndex === upperIndex) {
+    return sortedValues[lowerIndex];
+  }
+
+  return (
+    sortedValues[lowerIndex] +
+    (sortedValues[upperIndex] - sortedValues[lowerIndex]) * weight
+  );
+}
+
+function summarizeSalaryDistribution(values: number[]) {
+  if (values.length === 0) return null;
+
+  const sorted = [...values].sort((left, right) => left - right);
+  const q1 = quantile(sorted, 0.25);
+  const medianValue = quantile(sorted, 0.5);
+  const q3 = quantile(sorted, 0.75);
+
+  if (q1 === null || medianValue === null || q3 === null) {
+    return null;
+  }
+
+  const iqr = q3 - q1;
+  const lowerFence = q1 - iqr * 1.5;
+  const upperFence = q3 + iqr * 1.5;
+  const inliers = sorted.filter((value) => value >= lowerFence && value <= upperFence);
+  const whiskerLow = inliers[0] ?? sorted[0];
+  const whiskerHigh = inliers[inliers.length - 1] ?? sorted[sorted.length - 1];
+  const outliers = sorted.filter((value) => value < lowerFence || value > upperFence);
+
+  return {
+    min: whiskerLow,
+    q1,
+    median: medianValue,
+    q3,
+    max: whiskerHigh,
+    outliers,
+  };
+}
+
 function expandSalaryPairs(pairs: Array<{ label: string; count: number }>) {
   const values: number[] = [];
 
@@ -525,6 +574,19 @@ type CoopSalaryPoint = {
   ece_n: number;
 };
 
+type SalaryBoxPlot = {
+  profileId: ProfileId;
+  term: string;
+  termIndex: number;
+  n: number;
+  min: number;
+  q1: number;
+  median: number;
+  q3: number;
+  max: number;
+  outliers: number[];
+};
+
 type CoopLocationRow = {
   profile: string;
   totalPlacements: number;
@@ -554,6 +616,7 @@ type SharedEmployerRow = {
 };
 
 const salaryPoints: CoopSalaryPoint[] = [];
+const salaryBoxPlots: SalaryBoxPlot[] = [];
 
 for (let termNumber = 1; termNumber <= 6; termNumber += 1) {
   const seValues = expandSalaryPairs(
@@ -580,6 +643,27 @@ for (let termNumber = 1; termNumber <= 6; termNumber += 1) {
     cs_n: csValues.length,
     ece_n: eceValues.length,
   });
+
+  const distributions = [
+    ["se_2025", seValues],
+    ["cs_2025", csValues],
+    ["ece_2025", eceValues],
+  ] as const;
+
+  for (const [profileId, values] of distributions) {
+    const summary = summarizeSalaryDistribution(values);
+    if (!summary) {
+      continue;
+    }
+
+    salaryBoxPlots.push({
+      profileId,
+      term: `Co-op ${termNumber}`,
+      termIndex: termNumber - 1,
+      n: values.length,
+      ...summary,
+    });
+  }
 }
 
 const salaryFirst = salaryPoints[0];
@@ -596,10 +680,32 @@ const salaryGrowthLeader = PROFILE_IDS.reduce((best, profileId) =>
 );
 
 export const COOP_SALARY_POINTS = salaryPoints;
+export const COOP_SALARY_BOX_PLOTS = salaryBoxPlots;
+export const COOP_SALARY_DOMAIN_MAX = Math.ceil(
+  Math.max(...salaryBoxPlots.map((plot) => plot.max)) / 10,
+) * 10;
+
+const latestSalaryBoxes = Object.fromEntries(
+  PROFILE_IDS.map((profileId) => [
+    profileId,
+    salaryBoxPlots.find(
+      (plot) => plot.profileId === profileId && plot.term === "Co-op 6",
+    ),
+  ]),
+) as Record<ProfileId, SalaryBoxPlot | undefined>;
+
+const widestIqrLeader = PROFILE_IDS.reduce((best, profileId) => {
+  const plot = latestSalaryBoxes[profileId];
+  const bestPlot = latestSalaryBoxes[best];
+  const plotIqr = plot ? plot.q3 - plot.q1 : 0;
+  const bestIqr = bestPlot ? bestPlot.q3 - bestPlot.q1 : 0;
+  return plotIqr > bestIqr ? profileId : best;
+}, "se_2025" as ProfileId);
 
 export const COOP_SALARY_ANALYSIS = [
   `${PROFILE_META.find((profile) => profile.id === salaryLeader)?.shortLabel} ends with the highest estimated co-op #6 median at $${salaryLast[salaryLeader].toFixed(1)}/hr.`,
   `${PROFILE_META.find((profile) => profile.id === salaryGrowthLeader)?.shortLabel} shows the steepest first-to-last co-op salary climb, up roughly $${salaryGrowth[salaryGrowthLeader].toFixed(1)}/hr from co-op #1 to co-op #6.`,
+  `${PROFILE_META.find((profile) => profile.id === widestIqrLeader)?.shortLabel} has the widest co-op #6 interquartile pay band, so its latest-term salary spread is the broadest of the three.`,
 ];
 
 const locationCountsByProfile = Object.fromEntries(
@@ -935,7 +1041,7 @@ export const COOP_COMPARISON_COUNT = 5;
 
 export const COOP_METHOD_NOTES = [
   "SE co-op data comes from a separate coop.json source that stores six co-op-specific distributions per question. The earlier extraction missed that file; the tracked data now includes it.",
-  "Salary trend uses the median hourly co-op pay for each co-op number. SE uses exact published salary values, while CS and ECE medians are estimated from their published pay brackets.",
+  "The salary chart is a box-and-whisker summary for each co-op number. SE uses exact published salary values, while CS and ECE distributions are estimated from published pay brackets. Whiskers use Tukey's 1.5x IQR rule, and off-scale extreme outliers are omitted from the plotted axis so the main distribution stays readable.",
   "Location mix aggregates all six co-op terms into broad buckets: Remote, Ontario, Canada outside Ontario, United States, and International.",
   "Role mix now uses co-op #6 only rather than aggregating all six placements. The ECE co-op #6 role prompt is split into two subgroup charts in the source, so both published distributions are combined there.",
   "Recruiting-source mix aggregates all six co-op terms and excludes explicit no-placement responses, since those are not a sourcing channel.",
