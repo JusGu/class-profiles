@@ -161,6 +161,14 @@ a {
   color: var(--gb-yellow);
 }
 
+.content .recharts-default-legend li {
+  margin: 0;
+}
+
+.content .recharts-default-legend li::before {
+  content: none;
+}
+
 .content code {
   color: var(--gb-yellow);
   font-size: 0.96em;
